@@ -7,7 +7,7 @@ and the weak error references are closed forms rather than Monte Carlo estimates
 
 ## Background
 
-The Cox-Ingersoll-Ross process
+The Cox-Ingersoll-Ross process (Cox, Ingersoll & Ross, 1985)
 
 $$dS(t) = \kappa(\lambda - S(t)) dt + \sigma\sqrt{S(t)}dB(t), \qquad S(0) = S_0 > 0$$
 
@@ -187,15 +187,13 @@ and it is the one to use if a positivity-preserving variance scheme is wanted an
 
 ## References
 
-1. C. Kelly, *Computation and Simulation for Finance: An Introduction with Python*. Springer, 2022.
-2. M. Hefter, A. Jentzen. On arbitrarily slow convergence rates for strong numerical approximations of Cox-Ingersoll-Ross processes and squared Bessel processes. *Finance and Stochastics* 23(1), 139-172, 2019.
-3. D. J. Higham. An algorithmic introduction to numerical simulation of stochastic differential equations. *SIAM Review* 43(3), 525–546, 2001.
-4. A. Alfonsi. Strong order one convergence of a drift implicit Euler scheme: application to the CIR process. *Statistics & Probability Letters* 83(2), 602–607, 2013.
-5. S. Dereich, A. Neuenkirch, L. Szpruch. An Euler-type method for the strong approximation of the Cox–Ingersoll–Ross process. *Proceedings of the Royal Society A* 468, 1105–1115, 2012.
-6. R. Lord, R. Koekkoek, D. van Dijk. A comparison of biased simulation schemes for stochastic volatility models. *Quantitative Finance* 10(2), 177–194, 2010.
-7. L. B. G. Andersen. Simple and efficient simulation of the Heston stochastic volatility model. *Journal of Computational Finance* 11(3), 1–42, 2008.
-8. H. Albrecher, P. Mayer, W. Schoutens, J. Tistaert. The little Heston trap. *Wilmott Magazine*, January 2007, 83–92.
-9. J. C. Cox, J. E. Ingersoll, S. A. Ross. A theory of the term structure of interest rates. *Econometrica* 53(2), 385–407, 1985.
+1. H. Albrecher, P. Mayer, W. Schoutens, J. Tistaert. The little Heston trap. *Wilmott Magazine*, January 2007, 83–92.
+2. A. Alfonsi. Strong order one convergence of a drift implicit Euler scheme: application to the CIR process. *Statistics & Probability Letters* 83(2), 602–607, 2013.
+3. J. C. Cox, J. E. Ingersoll, S. A. Ross. A theory of the term structure of interest rates. *Econometrica* 53(2), 385–407, 1985.
+4. S. Dereich, A. Neuenkirch, L. Szpruch. An Euler-type method for the strong approximation of the Cox–Ingersoll–Ross process. *Proceedings of the Royal Society A* 468, 1105–1115, 2012.
+5. S. L. Heston, A Closed-Form Solution for Options with Stochastic Volatility with Applications to Bond and Currency Options. *Review of Financial Studies* 6(2), 327–343, 1993
+6. C. Kelly, *Computation and Simulation for Finance: An Introduction with Python*. Springer, 2022.
+
 
 ## Acknowledgements
 
@@ -205,4 +203,4 @@ Published with the permission of the module coordinator. No assignment material 
 
 ## Licence
 
-MIT — see [LICENSE](LICENSE).
+MIT. See [LICENSE](LICENSE).
