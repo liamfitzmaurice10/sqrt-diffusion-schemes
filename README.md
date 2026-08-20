@@ -16,7 +16,7 @@ While the Feller condition, $2\kappa\lambda \geq \sigma^2$, holding means the tr
 naive discretisations can produce negative values under the square root regardless of the condition being met.
 Feller not being met simply increases the rate at which the scheme may go negative.  
 
-This is not merely academic. CIR is both a short-rate model and the variance process of the Heston model.
+CIR is both a short-rate model and the variance process of the Heston model.
 Heston parameters calibrated to equity index options routinely violate Feller by a wide margin, the variance parameters used in the pricing section below have Feller ratios of 0.75 and 0.33. 
 What matters in practice is how each scheme behaves near zero at realistic stepsizes, not just its convergence order in the limit.
 
@@ -24,8 +24,7 @@ What matters in practice is how each scheme behaves near zero at realistic steps
 
 These four schemes were selected for comparison for three distinct reasons: 
 the reflected scheme as a natural way of enforcing positivity by construction; 
-the absolute and truncated schemes because they are known to converge strongly to the true CIR solution as $h \to 0$ 
-(Dereich, Neuenkirch & Szpruch, 2012, and related work); 
+the absolute and truncated schemes because they are known to converge strongly to the true CIR solution as $h \to 0$; 
 and the Lamperti scheme because it is drift-implicit and attains strong order 1 under the Feller condition, making its behaviour once that condition fails particularly interesting.
 
 Write $h$ for the stepsize and $\Delta B_{n+1}$ for the Brownian increment.
@@ -68,7 +67,6 @@ Thus, in the range $2\kappa\lambda < \sigma^2 \le 4\kappa\lambda $, the Feller c
 The coefficients here are not globally Lipschitz, so the line is included only as a visual benchmark.*
 
 At the baseline $\sigma = 0.1$, $q(x) = x$ no scheme has a resolvable weak error.
-Every measurement sits within 2-8 standard errors of zero and is flat in $h$ (fitted slopes 0.00 to 0.40). 
 For the absolute and truncated schemes this is exact, not just small.
 $S_0 = \lambda$ is the fixed point of the mean recursion, so $E[S_n] =\lambda$ at every step-size, matching $E[S(t)] = \lambda$ exactly.
 Reflected coincides with them here, since paths don't approach zero at this $\sigma$.
@@ -99,8 +97,9 @@ The Lamperti curves at $\sigma = 1.0$ are flat at around $1.5\times10^{-1}$ but 
 | Explicit EM (reflected) | 0.716 | 8.20e-04 | 8.22e-05 |
 | Lamperti implicit | 0.998 | 6.52e-04 | 1.99e-05 |
 
-As expected, the three explicit schemes agree perfectly for $\sigma = 0.1$ . 
-The Lamperti scheme attains the order 1 reported for drift-implicit Lamperti schemes in the literature.
+As expected, the three explicit schemes agree perfectly for $\sigma = 0.1$. 
+The Lamperti scheme attains the order 1 that Alfonsi (2013) proves for drift-implicit Lamperti schemes. 
+Dereich, Neuenkirch and Szpruch (2012), who introduced this scheme for CIR, prove the weaker order 1/2, up to a logarithmic factor, under the less restrictive condition $2\kappa\lambda > \sigma^2$
 
 The explicit figure of 0.716 sits above the classical 1/2 but should be read as a pre-asymptotic artefact.
 At $\sigma = 0.1$, the diffusion coefficient varies so little over the range the process visits that the noise is close to additive, 
@@ -188,3 +187,22 @@ and it is the one to use if a positivity-preserving variance scheme is wanted an
 
 ## References
 
+1. C. Kelly, *Computation and Simulation for Finance: An Introduction with Python*. Springer, 2022.
+2. M. Hefter, A. Jentzen. On arbitrarily slow convergence rates for strong numerical approximations of Cox-Ingersoll-Ross processes and squared Bessel processes. *Finance and Stochastics* 23(1), 139-172, 2019.
+3. D. J. Higham. An algorithmic introduction to numerical simulation of stochastic differential equations. *SIAM Review* 43(3), 525–546, 2001.
+4. A. Alfonsi. Strong order one convergence of a drift implicit Euler scheme: application to the CIR process. *Statistics & Probability Letters* 83(2), 602–607, 2013.
+5. S. Dereich, A. Neuenkirch, L. Szpruch. An Euler-type method for the strong approximation of the Cox–Ingersoll–Ross process. *Proceedings of the Royal Society A* 468, 1105–1115, 2012.
+6. R. Lord, R. Koekkoek, D. van Dijk. A comparison of biased simulation schemes for stochastic volatility models. *Quantitative Finance* 10(2), 177–194, 2010.
+7. L. B. G. Andersen. Simple and efficient simulation of the Heston stochastic volatility model. *Journal of Computational Finance* 11(3), 1–42, 2008.
+8. H. Albrecher, P. Mayer, W. Schoutens, J. Tistaert. The little Heston trap. *Wilmott Magazine*, January 2007, 83–92.
+9. J. C. Cox, J. E. Ingersoll, S. A. Ross. A theory of the term structure of interest rates. *Econometrica* 53(2), 385–407, 1985.
+
+## Acknowledgements
+
+Developed from coursework in MF4056 Computational Finance II at University College Cork. 
+Parts of the underlying assignment work were completed jointly with Cormac Fitzpatrick. 
+Published with the permission of the module coordinator. No assignment material is included.
+
+## Licence
+
+MIT — see [LICENSE](LICENSE).
