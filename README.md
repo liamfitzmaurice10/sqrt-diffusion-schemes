@@ -44,8 +44,18 @@ Thus, in the range $2\kappa\lambda < \sigma^2 \le 4\kappa\lambda $, the Feller c
 
 ## Method
 
-- The CIR allows exact transition sampling through the scaled noncentral $\chi^2$ distribution and sod closed forms are used for the weak-error references: $E[S(T)]$ and $E[(S(T)-K)^+]$.
+- The CIR transition density is a scaled noncentral $\chi^2$ distribution. This gives closed forms for the weak-error references $E[S(T)]$ and $E[(S(T)-K)^+]$.
   Both are exact, so there is no Monte Carlo noise on the reference side.
+
+- Strong error is referenced to each scheme at $N_{\text{ref}} = 2^{13} =  8192$, sixteen times the finest tested level, on the same Brownian path.
+  Tested levels are $N = 2^4,\dots,2^9$; the fit uses the four coarsest ($h = 1/16$ to $1/128$) and excludes $1/256$ and $1/512$,
+  which are close enough to the reference mesh to bias the slope.
+  
+- All schemes and all resolutions are driven by the same Brownian path, obtained by summing blocks of fine increments.
+  
+- $M = 200{,}000$ paths for weak error, $20{,}000$ for strong error, $10{,}000$ per $\sigma$ in the sweep, $100{,}000$ for Heston.
+  Monte Carlo standard errors are reported alongside every estimate,
+  and the path loops accumulate running sums in batches so that the finest mesh never needs to be held in memory in full.
 
 ## Results
 
@@ -75,11 +85,83 @@ with fitted weak orders 0.68 (absolute), 0.62 (truncated), 0.57 (reflected).
 The Lamperti curves at $\sigma = 1.0$ are flat at around $1.5\times10^{-1}$ but should not be read as weak errors.
 55% of paths fail, and the average is taken over the survivors, the paths that avoided the region close to zero where the scheme breaks.
 
-### Strong convergence under the Feller condition
+### Strong Error
+
+![Strong error](figures/03_strong_error.png)
+
+| Scheme | Fitted order | Error at $h=1/16$ | Error at $h=1/512$ |
+|---|---|---|---|
+| Explicit EM (absolute) | 0.716 | 8.20e-04 | 8.22e-05 |
+| Explicit EM (truncated) | 0.716 | 8.20e-04 | 8.22e-05 |
+| Explicit EM (reflected) | 0.716 | 8.20e-04 | 8.22e-05 |
+| Lamperti implicit | 0.998 | 6.52e-04 | 1.99e-05 |
+
+As expected, the three explicit schemes agree perfectly for $\sigma = 0.1$ . 
+The Lamperti scheme attains the order 1 reported for drift-implicit Lamperti schemes in the literature.
+
+The explicit figure of 0.716 sits above the classical 1/2 but should be read as a pre-asymptotic artefact.
+At $\sigma = 0.1$, the diffusion coefficient varies so little over the range the process visits that the noise is close to additive, 
+and the Milstein correction term that limits Euler–Maruyama to order 1/2 is small at these stepsizes. 
+The sweep below shows the rate collapsing toward 1/2, and then below it, as $\sigma$ grows.
+
+
+### Behaviour as the Feller condition fails
+
+![Feller sweep](figures/04_feller_sweep.png)
+
+With $\kappa = 1$ and $\lambda = 0.2$ the two boundaries are at $\sigma = \sqrt{0.4} \approx 0.632$ (Feller) and $\sigma = \sqrt{0.8} \approx 0.894$ ($\alpha = 0$). 
+Fitted strong orders across the sweep (a coarser reference mesh with fewer levels than the single-panel figure above, so the  fitted value of 0.724, differs slightly from the 0.716 reported above):
+
+| $\sigma$ | Feller ratio | $\alpha$ | Explicit (abs / trunc / refl) | Lamperti | Lamperti failure rate |
+|---|---|---|---|---|---|
+| 0.1 | 40.00 | +0.0988 | 0.724 / 0.724 / 0.724 | 1.001 | 0 |
+| 0.3 | 4.44 | +0.0888 | 0.549 / 0.549 / 0.549 | 0.988 | 0 |
+| 0.5 | 1.60 | +0.0688 | 0.532 / 0.535 / 0.526 | 0.986 | 0 |
+| 0.8 | 0.62 | +0.0200 | 0.489 / 0.492 / 0.492 | 0.728 | 0 |
+| 1.0 | 0.40 | −0.0250 | 0.459 / 0.437 / 0.483 | 0.958\* | 0.545 |
+| 1.2 | 0.28 | −0.0800 | 0.425 / 0.386 / 0.463 | 0.879\* | 0.734 |
+
+\* conditional on survival, and therefore not comparable with the other rows.
+
+The explicit schemes degrade smoothly as $\sigma$ increases. 
+Settling near 1/2 as Feller is approached and 0.39–0.46 once it is violated. 
+None of these fail however, by construction they deal with $S_N < 0$.
+The Lamperti scheme holds order 1 right up to the Feller boundary, 
+degrades to 0.73 at $\sigma = 0.8$ where Feller is already violated but $\alpha$ remains positive
+and below $\alpha = 0$ a majority of paths fail, so its reported order there is significantly less meaningful.
 
 
 ### Effect on Heston option prices
 
+![Heston prices](figures/06_heston_prices.png)
+
+European call, $S_0 = K = 100$, $r = 0.03$, $V_0 = \theta = 0.04$, $\kappa_V = 1.5$, $\rho = -0.5$, $T = 1$, $M = 100{,}000$ paths, 
+against a semi-analytic benchmark obtained by Fourier inversion of the characteristic function (Heston, 1993; Albrecher, Mayer, Schoutens & Tistaert, 2007). 
+Every scheme sees the same Brownian increments and the coarse mesh is a coarsening of the fine one, 
+so differences between schemes and between meshes are paired.
+
+At $\sigma_V = 0.4$ (Feller ratio 0.75, $\alpha = +0.010$, benchmark 9.0255)
+the scheme choice is immaterial at $N = 256$, all four prices lie within 0.023 of the benchmark, well inside the ±0.073 Monte Carlo interval.
+
+At $\sigma_V = 0.6$ (Feller ratio 0.33, $\alpha = -0.015$, benchmark 8.6316) it is not:
+
+| Scheme | Price at $N=256$ | Bias vs benchmark | Paired diff. vs truncated | Failed paths |
+|---|---|---|---|---|
+| Explicit EM (absolute) | 8.7626 | +0.1310 | +0.0547 ± 0.0091 | 0 |
+| Explicit EM (truncated) | 8.7079 | +0.0763 | — | 0 |
+| Explicit EM (reflected) | 9.0144 | +0.3828 | +0.3065 ± 0.0129 | 0 |
+| Lamperti implicit | 6.5893\* | −2.0423\* | −0.0299 ± 0.0118\* | 0.777 |
+
+\* over surviving paths only.
+
+The reflected scheme is biased high by 0.38, which is 4.4% of the option value and five times the 95% Monte Carlo half-width. 
+The choice of variance scheme is worth more here than quadrupling the path count. 
+The ranking is exactly what the mechanism predicts; reflection adds variance, and more variance raises an at-the-money call.
+
+The paired coarse-minus-fine differences at $\sigma_V = 0.6$ show the same ordering in the discretisation bias itself: +0.5206 ± 0.0245 (reflected),
++0.2099 ± 0.0227 (absolute), +0.0815 ± 0.0263 (truncated). 
+Truncation is the least mesh-sensitive of the three and the closest to the benchmark, 
+and it is the one to use if a positivity-preserving variance scheme is wanted and $\alpha < 0$ rules out Lamperti.
 
 ## Limitations
 
