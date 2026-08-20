@@ -50,23 +50,30 @@ Thus, in the range $2\kappa\lambda < \sigma^2 \le 4\kappa\lambda $, the Feller c
 ## Results
 
 ### Weak error
-At the baseline $\sigma = 0.1$ **no scheme has a resolvable weak error.
+![Weak error](figures/02_weak_error.png)
+*The dashed "slope 1" is the rate a standard Euler–Maruyama scheme would attain under globally Lipschitz coefficients. 
+The coefficients here are not globally Lipschitz, so the line is included only as a visual benchmark.*
+
+At the baseline $\sigma = 0.1$, $q(x) = x$ no scheme has a resolvable weak error.
 Every measurement sits within 2–8 standard errors of zero and is flat in $h$ (fitted slopes 0.00 to 0.40). 
-An indicator we are just looking at Monte Carlo noise rather than a discretisation bias.
+For the absolute and truncated schemes this is exact, not just small.
+$S_0 = \lambda$ is the fixed point of the mean recursion, so $E[S_n] =\lambda$ at every step-size, matching $E[S(t)] = \lambda$ exactly.
+Reflected coincides with them here, since paths don't approach zero at this $\sigma$.
+Lamperti's error is not exactly zero as it carries its own small bias from the transform but for $\sigma = 0.1$, it is too small to distinguish from the Monte Carlo noise.
 
-For the identity test function that outcome is not merely a matter of sample size, it is exact.
-The CIR drift is affine and $\Delta B_{n+1}$ is independent of $S_n$ with mean zero, so the absolute and truncated schemes satisfy
-$E[S_{n+1}] = E[S_n] + h\kappa(\lambda - E[S_n])$ identically. 
-With $S_0 = \lambda$ the recursion is constant at $\lambda$ and the weak bias in the mean is exactly zero at every $h$*. 
-The measurement confirms it, at $\sigma = 1.0$ the ratio of error to standard error is 0.9 for both schemes, across all six levels.
 
-The same panel separates the schemes that do carry bias. Reflection injects mass at the boundary, and at $\sigma = 1.0$ the reflected scheme shows a mean
-bias of $4.3\times10^{-2}$ — 65 standard errors, decaying with fitted slope 0.51.
-For the call payoff at $\sigma = 1.0$ the fitted weak orders are 0.68 (absolute), 0.62 (truncated) and 0.57 (reflected), 
-all short of the order 1 that Euler–Maruyama attains under global Lipschitz conditions, which do not hold here.
+For $\sigma = 0.1$, $q(x) = (x-0.2)^+$, the weak error is real and resolvable at the coarse end but shrinks sharply as $h$ decreases.
+By the middle of the tested range it appears to have fallen to the size of the Monte Carlo noise floor. 
 
-The Lamperti curves at $\sigma = 1.0$ are flat at $1.5\times10^{-1}$ and should not be read as weak errors at all: 55% of paths fail, 
-and the average is taken over the survivors, which are exactly the paths that avoided the region where the scheme breaks.
+At $\sigma = 1$ the Feller condition fails and the behaviour changes. 
+For $q(x) = x$, the absolute and truncated schemes' error remains exactly zero for the same reasons as it did before.
+Reflection now injects mass at the boundary, showing a mean bias of $4.3\times10^{-2}$, 65 standard errors, decaying with fitted slope 0.51.
+For $q(x) = (x-0.2)^+$, all three explicit schemes have non-zero weak error, 
+with fitted weak orders 0.68 (absolute), 0.62 (truncated), 0.57 (reflected).
+
+
+The Lamperti curves at $\sigma = 1.0$ are flat at around $1.5\times10^{-1}$ but should not be read as weak errors.
+55% of paths fail, and the average is taken over the survivors, the paths that avoided the region close to zero where the scheme breaks.
 
 ### Strong convergence under the Feller condition
 
