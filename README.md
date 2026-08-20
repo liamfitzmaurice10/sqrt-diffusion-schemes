@@ -1,6 +1,9 @@
 # Numerical Schemes for Square-Root Diffusions
 
-Introduction
+Four discretisations of the Cox-Ingersoll-Ross process, compared on weak error, strong error, and the price of a European call under Heston. 
+Everything is driven by one Brownian path per Monte Carlo sample, so schemes and mesh sizes are compared pairwise rather than as independent runs, 
+and the weak error references are closed forms rather than Monte Carlo estimates.
+
 
 ## Background
 
@@ -61,11 +64,11 @@ Thus, in the range $2\kappa\lambda < \sigma^2 \le 4\kappa\lambda $, the Feller c
 
 ### Weak error
 ![Weak error](figures/02_weak_error.png)
-*The dashed "slope 1" is the rate a standard Euler–Maruyama scheme would attain under globally Lipschitz coefficients. 
+*The dashed "slope 1" is the rate a standard Euler-Maruyama scheme would attain under globally Lipschitz coefficients. 
 The coefficients here are not globally Lipschitz, so the line is included only as a visual benchmark.*
 
 At the baseline $\sigma = 0.1$, $q(x) = x$ no scheme has a resolvable weak error.
-Every measurement sits within 2–8 standard errors of zero and is flat in $h$ (fitted slopes 0.00 to 0.40). 
+Every measurement sits within 2-8 standard errors of zero and is flat in $h$ (fitted slopes 0.00 to 0.40). 
 For the absolute and truncated schemes this is exact, not just small.
 $S_0 = \lambda$ is the fixed point of the mean recursion, so $E[S_n] =\lambda$ at every step-size, matching $E[S(t)] = \lambda$ exactly.
 Reflected coincides with them here, since paths don't approach zero at this $\sigma$.
@@ -101,7 +104,7 @@ The Lamperti scheme attains the order 1 reported for drift-implicit Lamperti sch
 
 The explicit figure of 0.716 sits above the classical 1/2 but should be read as a pre-asymptotic artefact.
 At $\sigma = 0.1$, the diffusion coefficient varies so little over the range the process visits that the noise is close to additive, 
-and the Milstein correction term that limits Euler–Maruyama to order 1/2 is small at these stepsizes. 
+and the Milstein correction term that limits Euler-Maruyama to order 1/2 is small at these stepsizes. 
 The sweep below shows the rate collapsing toward 1/2, and then below it, as $\sigma$ grows.
 
 
@@ -124,7 +127,7 @@ Fitted strong orders across the sweep (a coarser reference mesh with fewer level
 \* conditional on survival, and therefore not comparable with the other rows.
 
 The explicit schemes degrade smoothly as $\sigma$ increases. 
-Settling near 1/2 as Feller is approached and 0.39–0.46 once it is violated. 
+Settling near 1/2 as Feller is approached and 0.39-0.46 once it is violated. 
 None of these fail however, by construction they deal with $S_N < 0$.
 The Lamperti scheme holds order 1 right up to the Feller boundary, 
 degrades to 0.73 at $\sigma = 0.8$ where Feller is already violated but $\alpha$ remains positive
@@ -148,7 +151,7 @@ At $\sigma_V = 0.6$ (Feller ratio 0.33, $\alpha = -0.015$, benchmark 8.6316) it 
 | Scheme | Price at $N=256$ | Bias vs benchmark | Paired diff. vs truncated | Failed paths |
 |---|---|---|---|---|
 | Explicit EM (absolute) | 8.7626 | +0.1310 | +0.0547 ± 0.0091 | 0 |
-| Explicit EM (truncated) | 8.7079 | +0.0763 | — | 0 |
+| Explicit EM (truncated) | 8.7079 | +0.0763 | - | 0 |
 | Explicit EM (reflected) | 9.0144 | +0.3828 | +0.3065 ± 0.0129 | 0 |
 | Lamperti implicit | 6.5893\* | −2.0423\* | −0.0299 ± 0.0118\* | 0.777 |
 
@@ -164,6 +167,24 @@ Truncation is the least mesh-sensitive of the three and the closest to the bench
 and it is the one to use if a positivity-preserving variance scheme is wanted and $\alpha < 0$ rules out Lamperti.
 
 ## Limitations
+
+- Strong error is measured against each scheme's own fine-mesh run, so what is reported is self-convergence,  not distance from the true solution.
+  The pairwise agreement table is a partial check on this, not a substitute.
+  
+- Exact sampling gives the correct marginal density but does not use the same Brownian path as the schemes so it can only be used for weak error.
+  
+- Convergence orders are estimated from four or five levels spanning a factor of 8-16 in $h$.
+  They are indicative, and results like the explicit schemes' 0.716 at $\sigma = 0.1$ is visibly pre-asymptotic.
+
+- The spot process in the Heston section is discretised by log-Euler, which carries its own $O(h)$ bias.
+  It is identical across schemes, so the comparison between schemes is unaffected,
+  but the errors from the benchmark include it.
+  
+- Only one parameter family was used throughout ($\kappa = 1$, $\lambda = S_0 = 0.2$), and
+  no calibration to market data. The Heston parameters are plausible but invented.
+  
+- Every Lamperti figure in the $\alpha < 0$ regime is conditional on survival and is addressed each time it is relevant.
+  
 
 ## References
 
